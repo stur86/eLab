@@ -146,7 +146,13 @@ var Applet = function(scope, ngApp) {
         this.orbit.e = Math.sqrt(1+2.0*E*l2/(m*m*m*gamma*gamma));
 
         // What's our current theta then?
-        theta = Math.acos((l2/(r*m2*gamma)-1)/this.orbit.e); // We still don't know the sign though...
+        var theta_arg = (l2/(r*m2*gamma)-1)/this.orbit.e;
+        theta = Math.acos(theta_arg); // We still don't know the sign though...
+        // In case of NaNs...
+        if (isNaN(theta)) {
+            theta = theta_arg > 1? 0 : Math.PI;
+        }
+
         // The convention is simple: if we're getting FURTHER AWAY from the centre, then theta is between 0 and 180, otherwise 180-360
         r_v = (r_x*m_vx+r_y*m_vy)/r; // Derivative of r in time
         if (r_v < 0)
@@ -229,6 +235,7 @@ var Applet = function(scope, ngApp) {
         }
 
         // And apply the thing to drawing
+        console.log(orbit_data);
         d3.select('#orbit_path').attr('d', d3.svg.line().x(function(d) {return d.x})
                                                         .y(function(d) {return d.y})
                                                         .interpolate('quadratic')(orbit_data));
