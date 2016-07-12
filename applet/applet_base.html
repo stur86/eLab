@@ -111,9 +111,19 @@
 
         var app;
         var ctrlwall;
-        var applet_url = extractURLpars()['applet'];
-        applet_url = applet_url || "test_applet.js";
-        $.getScript(applet_url, function() {
+        var applet_name = extractURLpars()['applet'];
+        var applet_url = function(applet_name) {
+            var applet_list = {
+                'orbital': 'app_collection/mechanics/orbital.js',
+            };
+            if ((applet_name) in applet_list) {
+                return applet_list[applet_name];
+            }
+            else {
+                return 'test_applet.js';
+            }
+        }
+        $.getScript(applet_url(applet_name), function() {
             app = new ElabApplet(Applet);            
             // Set ng-controller]
             $('html').attr('ng-controller', app.worldApp.name  + 'Ctrl'); 

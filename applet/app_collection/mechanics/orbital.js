@@ -18,7 +18,6 @@ var Applet = function(scope, ngApp) {
         that.origin = [$('#AppletWorld').width()/2.0, $('#AppletWorld').height()/2.0];
         that.set_moon_xy();
         that.set_moonspeed_xy();
-        this.eval_orbit();
         that.scope.$apply();
     });
 
