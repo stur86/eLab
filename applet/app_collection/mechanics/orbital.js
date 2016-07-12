@@ -7,12 +7,13 @@ var Applet = function(scope, ngApp) {
 
     this.running = false;
 
-    this._G0 = 1e5;
-    this._planetmass = 20;
 
     this.explode_sfx = new Audio('../sfx/explosion.wav');
 
     this.origin = [$('#AppletWorld').width()/2.0, $('#AppletWorld').height()/2.0];
+    this._G0 = 1e5*Math.pow(this.origin[0]/660.0, 3); // Set it up on initialization, depending on device size
+    this._planetmass = 20;
+
     var that = this;
     $(window).resize(function() {
         that.grab_planet_xy();
