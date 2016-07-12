@@ -8,71 +8,72 @@ var Applet = function(scope, ngApp) {
     this.running = false;
 
     this._G0 = 1e5;
+    this._planetmass = 20;
 
     this.explode_sfx = new Audio('../sfx/explosion.wav');
 
     this.origin = [$('#AppletWorld').width()/2.0, $('#AppletWorld').height()/2.0];
     var that = this;
     $(window).resize(function() {
-        that.grab_moon_xy();
+        that.grab_planet_xy();
         that.origin = [$('#AppletWorld').width()/2.0, $('#AppletWorld').height()/2.0];
-        that.set_moon_xy();
-        that.set_moonspeed_xy();
+        that.set_planet_xy();
+        that.set_planetspeed_xy();
         that.scope.$apply();
     });
 
-    this.grab_moon_xy = function() {
-        this.moon_xy = [parseFloat(this.moon.attr('cx'))-this.origin[0],
-                        parseFloat(this.moon.attr('cy'))-this.origin[1]];        
+    this.grab_planet_xy = function() {
+        this.planet_xy = [parseFloat(this.planet.attr('cx'))-this.origin[0],
+                        parseFloat(this.planet.attr('cy'))-this.origin[1]];        
     }
-    this.grab_moonspeed_xy = function() {
-        this.moonspeed_xy = [parseFloat(this.moonspeed.attr('x2'))-parseFloat(this.moonspeed.attr('x1')),
-                             parseFloat(this.moonspeed.attr('y2'))-parseFloat(this.moonspeed.attr('y1'))];        
-    }
-
-    this.set_moon_xy = function() {
-        this.moon.attr('cx', this.moon_xy[0]+this.origin[0]);
-        this.moon.attr('cy', this.moon_xy[1]+this.origin[1]);
-    }
-    this.set_moonspeed_xy = function() {
-        this.moonspeed.attr('x1', this.moon_xy[0]+this.origin[0]);
-        this.moonspeed.attr('y1', this.moon_xy[1]+this.origin[1]);
-        this.moonspeed.attr('x2', this.moon_xy[0]+this.origin[0]+this.moonspeed_xy[0]);
-        this.moonspeed.attr('y2', this.moon_xy[1]+this.origin[1]+this.moonspeed_xy[1]);
-        this.mspeedhandle.attr('cx', this.moon_xy[0]+this.origin[0]+this.moonspeed_xy[0]);
-        this.mspeedhandle.attr('cy', this.moon_xy[1]+this.origin[1]+this.moonspeed_xy[1]);        
+    this.grab_planetspeed_xy = function() {
+        this.planetspeed_xy = [parseFloat(this.planetspeed.attr('x2'))-parseFloat(this.planetspeed.attr('x1')),
+                             parseFloat(this.planetspeed.attr('y2'))-parseFloat(this.planetspeed.attr('y1'))];        
     }
 
-    this.moon_drag_on = function() {
-        makeDraggableSVG('#moon', {x: ['cx'], y: ['cy']}, {
+    this.set_planet_xy = function() {
+        this.planet.attr('cx', this.planet_xy[0]+this.origin[0]);
+        this.planet.attr('cy', this.planet_xy[1]+this.origin[1]);
+    }
+    this.set_planetspeed_xy = function() {
+        this.planetspeed.attr('x1', this.planet_xy[0]+this.origin[0]);
+        this.planetspeed.attr('y1', this.planet_xy[1]+this.origin[1]);
+        this.planetspeed.attr('x2', this.planet_xy[0]+this.origin[0]+this.planetspeed_xy[0]);
+        this.planetspeed.attr('y2', this.planet_xy[1]+this.origin[1]+this.planetspeed_xy[1]);
+        this.mspeedhandle.attr('cx', this.planet_xy[0]+this.origin[0]+this.planetspeed_xy[0]);
+        this.mspeedhandle.attr('cy', this.planet_xy[1]+this.origin[1]+this.planetspeed_xy[1]);        
+    }
+
+    this.planet_drag_on = function() {
+        makeDraggableSVG('#planet', {x: ['cx'], y: ['cy']}, {
             onMoveCallback: function(attrs) {
-                that.grab_moonspeed_xy();
-                that.moon_xy = [attrs['cx']-that.origin[0], attrs['cy']-that.origin[1]];
-                that.set_moonspeed_xy();
+                that.grab_planetspeed_xy();
+                that.planet_xy = [attrs['cx']-that.origin[0], attrs['cy']-that.origin[1]];
+                that.set_planetspeed_xy();
             },
         });
     }
 
 
     this.reset_system = function() {
-        // Moon coordinates
+        // planet coordinates
         if (!that.running) {
-            that.moon_xy = [that.origin[0]/2.0, 0];
-            that.moonspeed_xy = [0, -that.origin[0]/4.0];            
+            that.planet_xy = [that.origin[0]/2.0, 0];
+            that.planetspeed_xy = [0, -that.origin[0]/4.0];            
         }
-        that.set_moon_xy();
-        that.set_moonspeed_xy();
+        that.set_planet_xy();
+        that.set_planetspeed_xy();
     }    
 
-    this.moon_explode = function() {
+    this.planet_explode = function() {
         // In this eventuality, use D3 for an animation
-        var moon = d3.select('#moon');
+        var planet = d3.select('#planet');
         // Immediately stop running
         this.running = false;
         // Start a transition
-        var startcol = moon.style('fill');
+        var startcol = planet.style('fill');
         that.explode_sfx.play();
-        moon.transition()
+        planet.transition()
         .duration(750)
         .style({
             'r': 150,
@@ -82,7 +83,7 @@ var Applet = function(scope, ngApp) {
         .each('end', function() {
             // Restore and reset everything
             that.reset_system();
-            moon.style({
+            planet.style({
                 'fill': startcol,
                 'opacity': 1,
                 'r': null,
@@ -108,12 +109,12 @@ var Applet = function(scope, ngApp) {
         * Gamma is a simple constant, _G0*M
         */
 
-        var m = parseFloat(this.parameters.moon_mass.value);
-        var M = parseFloat(this.parameters.planet_mass.value);
-        var r_x = this.moon_xy[0];
-        var r_y = this.moon_xy[1];
-        var m_vx = this.moonspeed_xy[0];
-        var m_vy = this.moonspeed_xy[1];
+        var m = parseFloat(this._planetmass);
+        var M = parseFloat(this.parameters.star_mass.value);
+        var r_x = this.planet_xy[0];
+        var r_y = this.planet_xy[1];
+        var m_vx = this.planetspeed_xy[0];
+        var m_vy = this.planetspeed_xy[1];
 
         r = Math.sqrt(r_x*r_x+r_y*r_y);
 
@@ -233,22 +234,13 @@ var Applet = function(scope, ngApp) {
     }
 
     this.parameters = {
-        "planet_mass":
+        "star_mass":
         {
-            'name': "Planet mass",
+            'name': "Star mass",
             'type': "slide",
             'value': 100.0,
             'min': 50.0,
             'max': 150.0,
-            'step': 1.0,
-        },
-        "moon_mass":
-        {
-            'name': "Moon mass",
-            'type': "slide",
-            'value': 20.0,
-            'min': 10.0,
-            'max': 30.0,
             'step': 1.0,
         },
         "startbutton":
@@ -284,6 +276,38 @@ var Applet = function(scope, ngApp) {
         },              
     };
 
+    // Star Size parameters
+    collapse_index = 10;
+    fM_scale = Math.pow(0.5, 1.0/collapse_index)*0.99;
+    // And color...    
+
+    this.fM = 0.5;
+    Object.defineProperty(this, 'starSize', {
+        get: function() {
+            var M = parseFloat(this.parameters.star_mass.value);
+            fM = (M-this.parameters.star_mass.min)/(this.parameters.star_mass.max-this.parameters.star_mass.min);
+            return (Math.sqrt(M)*7)*(2-1.0/(1-Math.pow(fM*fM_scale, collapse_index)));
+        }
+    });
+
+    Object.defineProperty(this, 'starColor', {
+        get: function() {
+            var M = parseFloat(this.parameters.star_mass.value);
+            var fM = (M-this.parameters.star_mass.min)/(this.parameters.star_mass.max-this.parameters.star_mass.min);
+            // Color parameters:
+            return 'hsl('+parseInt(310*fM)+',80%,'+parseInt((1-Math.pow(fM, collapse_index))*50)+'%)';
+        }
+    });
+
+    Object.defineProperty(this, 'starHaloColor', {
+        get: function() {
+            var M = parseFloat(this.parameters.star_mass.value);
+            var fM = (M-this.parameters.star_mass.min)/(this.parameters.star_mass.max-this.parameters.star_mass.min);
+            // Color parameters:
+            return 'hsl('+parseInt(310*fM)+',80%,40%)';
+        }
+    });
+
     this.svgurl = 'app_collection/mechanics/orbital.svg';
 
     this.description = "Newtonian gravity experiment.";
@@ -291,60 +315,60 @@ var Applet = function(scope, ngApp) {
     this.start = function() {
         this.running = true;
         // Disengage dragging
-        this.grab_moon_xy();
-        this.grab_moonspeed_xy();
+        this.grab_planet_xy();
+        this.grab_planetspeed_xy();
         this.eval_orbit();
-        this.moon.off('mousedown');
-        this.moonspeed.css('display', 'none');
+        this.planet.off('mousedown');
+        this.planetspeed.css('display', 'none');
         this.mspeedhandle.css('display', 'none');
-        this._planetmass0 = parseFloat(this.parameters.planet_mass.value); // Necessary for future checks
+        this._starR0 = this.starSize; // Necessary for future checks
     }
 
     this.update = function() {
         if (this.running) {            
             var dts = this.dt/1000.0;
-            this.moon_xy[0] += this.moonspeed_xy[0]*dts/2;
-            this.moon_xy[1] += this.moonspeed_xy[1]*dts/2;
+            this.planet_xy[0] += this.planetspeed_xy[0]*dts/2;
+            this.planet_xy[1] += this.planetspeed_xy[1]*dts/2;
             // Calculate forces...
-            var r2 = this.moon_xy[0]*this.moon_xy[0]+this.moon_xy[1]*this.moon_xy[1];
+            var r2 = this.planet_xy[0]*this.planet_xy[0]+this.planet_xy[1]*this.planet_xy[1];
             var r = Math.sqrt(r2);
-            var Fmag = this._G0*this.parameters.planet_mass.value/r2;
-            var Fvec = [-this.moon_xy[0]/r*Fmag, -this.moon_xy[1]/r*Fmag];
-            this.moonspeed_xy[0] += Fvec[0]*dts;
-            this.moonspeed_xy[1] += Fvec[1]*dts;
-            this.moon_xy[0] += this.moonspeed_xy[0]*dts/2;
-            this.moon_xy[1] += this.moonspeed_xy[1]*dts/2;        
-            this.set_moon_xy();
+            var Fmag = this._G0*this.parameters.star_mass.value/r2;
+            var Fvec = [-this.planet_xy[0]/r*Fmag, -this.planet_xy[1]/r*Fmag];
+            this.planetspeed_xy[0] += Fvec[0]*dts;
+            this.planetspeed_xy[1] += Fvec[1]*dts;
+            this.planet_xy[0] += this.planetspeed_xy[0]*dts/2;
+            this.planet_xy[1] += this.planetspeed_xy[1]*dts/2;        
+            this.set_planet_xy();
 
-            var pmass = parseFloat(this.parameters.planet_mass.value);
-            if (this._planetmass0 != pmass) {
-                this._planetmass0 = pmass;
+            var starR = this.starSize;
+            if (this._starR0 != starR) {
+                this._starR0 = starR;
                 this.eval_orbit();
             }
 
             // Check position
-            var min_r = pmass + parseFloat(this.parameters.moon_mass.value);
+            var min_r = starR + parseFloat(this._planetmass);
             if (r <= min_r) {
-                this.moon_explode();
+                this.planet_explode();
             }
         }
     }
 
     this.stop = function() {
         this.running = false;
-        this.moon_drag_on();
-        this.set_moonspeed_xy();
-        this.moonspeed.css('display', 'block');
+        this.planet_drag_on();
+        this.set_planetspeed_xy();
+        this.planetspeed.css('display', 'block');
         this.mspeedhandle.css('display', 'block');
     }
 
     this.loaded = function() {
-        this.moon_drag_on();
-        makeDraggableSVG('#moonspeed_handle', {x: ['#moonspeed$x2', 'cx'], y: ['#moonspeed$y2', 'cy']});
+        this.planet_drag_on();
+        makeDraggableSVG('#planetspeed_handle', {x: ['#planetspeed$x2', 'cx'], y: ['#planetspeed$y2', 'cy']});
         // Set statically the starting coordinates to that
-        this.moon = $('#moon');
-        this.moonspeed = $('#moonspeed');
-        this.mspeedhandle = $('#moonspeed_handle');
+        this.planet = $('#planet');
+        this.planetspeed = $('#planetspeed');
+        this.mspeedhandle = $('#planetspeed_handle');
         this.reset_system();
     }
 }

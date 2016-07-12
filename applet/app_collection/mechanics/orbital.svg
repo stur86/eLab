@@ -1,6 +1,9 @@
 <defs>
 <filter id="f1" x="-20%" y="-20%" width="140%" height="140%">
-  <feGaussianBlur in="SourceGraphic" stdDeviation="0.04" />
+  <feGaussianBlur in="SourceGraphic" stdDeviation="0.05" />
+</filter>
+<filter id="f2" x="-20%" y="-20%" width="140%" height="140%">
+  <feGaussianBlur in="SourceGraphic" stdDeviation="5" />
 </filter>
 <marker id="arrow" markerWidth="10" markerHeight="10" refx="0" refy="1.5" orient="auto" markerUnits="strokeWidth">
   <path d="M0,0 L0,3 L4,1.5 z" fill="#bbeedd" />
@@ -11,14 +14,18 @@
 <path id="orbit_path" stroke="#eedd88" stroke-width="1" ng-attr-transform="translate({{engine.origin[0]}},{{engine.origin[1]}})"
                                    ng-style="{'opacity': (engine.parameters.show_orbit.value? 1 : 0)*(engine.running? 1 : 0)}" />
 
-<circle id="planet" fill="#44ee97" ng-attr-r="{{engine.parameters.planet_mass.value}}"
+<circle id="star_halo" ng-attr-fill="{{engine.starHaloColor}}" ng-attr-r="{{engine.starSize}}"
+                                   ng-attr-cx="{{engine.origin[0]}}"
+                                   ng-attr-cy="{{engine.origin[1]}}" filter="url(#f2)"
+                                   style="{opacity: 0.1}" />
+<circle id="star" ng-attr-fill="{{engine.starColor}}" ng-attr-r="{{engine.starSize}}"
                                    ng-attr-cx="{{engine.origin[0]}}"
                                    ng-attr-cy="{{engine.origin[1]}}"></circle>
-<circle id="moon" fill="#ee9744" ng-attr-r="{{engine.parameters.moon_mass.value}}"
+<circle id="planet" fill="#ee9744" ng-attr-r="{{engine._planetmass}}"
                                  cx="0"
                                  cy="0"></circle>
-<line id="moonspeed" stroke="#bbeedd" stroke-width="5" marker-end="url(#arrow)" />             
-<circle id="moonspeed_handle" r="15" fill="rgba(255,255,255,0)" />
+<line id="planetspeed" stroke="#bbeedd" stroke-width="5" marker-end="url(#arrow)" />             
+<circle id="planetspeed_handle" r="15" fill="rgba(255,255,255,0)" />
 <circle id="focus1" fill="#eedd88" r="5"  ng-attr-transform="translate({{engine.origin[0]}},{{engine.origin[1]}})"
                                    ng-style="{'opacity': (engine.parameters.show_orbit.value? 1 : 0)*(engine.running? 1 : 0)}"
                                    ng-attr-cx="{{engine.orbit.foci[0][0]}}"
