@@ -48,8 +48,19 @@ function makeDraggableSVG(selector, to_edit, additional) {
         evt.preventDefault();
 
         // Store the zero position
-        drag_obj.data('currentX', evt.clientX);
-        drag_obj.data('currentY', evt.clientY);
+        if (evt.type == 'touchstart') {
+            var tX = evt.originalEvent.touches[0].clientX;
+            var tY = evt.originalEvent.touches[0].clientY;
+        }
+        else {
+            var tX = evt.clientX;
+            var tY = evt.clientY;
+        }
+
+        drag_obj.data('currentX', tX);
+        drag_obj.data('currentY', tY);           
+
+        console.log(evt);
 
         // Assign a mousemove event
         svg.on('mousemove touchmove', function(evt) {
@@ -59,8 +70,19 @@ function makeDraggableSVG(selector, to_edit, additional) {
         
             newattr = {}
 
-            dx = evt.clientX - drag_obj.data('currentX');
-            dy = evt.clientY - drag_obj.data('currentY');
+            console.log(evt);
+
+            if (evt.type == 'touchmove') {
+                var tX = evt.originalEvent.touches[0].clientX;
+                var tY = evt.originalEvent.touches[0].clientY;
+            }
+            else {
+                var tX = evt.clientX;
+                var tY = evt.clientY;
+            }
+
+            dx = tX - drag_obj.data('currentX');
+            dy = tY - drag_obj.data('currentY');
 
             dcoords = {x: dx, y: dy};
             for (coord in to_edit) {
@@ -72,8 +94,8 @@ function makeDraggableSVG(selector, to_edit, additional) {
                 }
             }
 
-            drag_obj.data('currentX', evt.clientX);
-            drag_obj.data('currentY', evt.clientY);
+            drag_obj.data('currentX', tX);
+            drag_obj.data('currentY', tY);
 
             if (additional.onMoveCallback != null) {
                 additional.onMoveCallback(newattr);
