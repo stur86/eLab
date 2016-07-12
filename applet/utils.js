@@ -42,14 +42,21 @@ function makeDraggableSVG(selector, to_edit, additional) {
         }
     }
 
-    drag_obj.on('mousedown', function(evt) {
+    drag_obj.on('mousedown touchstart', function(evt) {
+
+        evt.stopPropagation();
+        evt.preventDefault();
+
         // Store the zero position
         drag_obj.data('currentX', evt.clientX);
         drag_obj.data('currentY', evt.clientY);
 
         // Assign a mousemove event
-        svg.on('mousemove', function(evt) {
+        svg.on('mousemove touchmove', function(evt) {
 
+            evt.stopPropagation();
+            evt.preventDefault();
+        
             newattr = {}
 
             dx = evt.clientX - drag_obj.data('currentX');
@@ -75,11 +82,9 @@ function makeDraggableSVG(selector, to_edit, additional) {
 
         // This one is in common for UP and LEAVE
         var end_drag = function(evt) {
-            svg.off('mousemove');
+            svg.off('mousemove touchmove');
         }
 
-        svg.on('mouseup', end_drag);
-        svg.on('mouseleave', end_drag);
-
+        svg.on('mouseup mouseleave touchend touchleave', end_drag);
     });
 }
