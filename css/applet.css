@@ -1,0 +1,337 @@
+@font-face {
+    font-family: "Karnivore-Lite";
+    src: url("../fonts/Karnivore-Lite/KARNIVOL.ttf");
+}
+
+@font-face {
+    font-family: "Karnivore-Lite";
+    font-weight: bold;
+    src: url("../fonts/Karnivore-Lite/KARNIVOR.ttf");
+}
+
+@font-face {
+    font-family: "Exo";
+    src: url("../fonts/exo/Exo-Regular.otf");
+}
+
+@font-face {
+    font-family: "Exo";
+    font-weight: bold;
+    src: url("../fonts/exo/Exo-Bold.otf");
+}
+
+body {
+
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 0px;
+    margin: 0px;
+
+    overflow: hidden;
+    font-family: "Exo";
+}
+
+.visible {
+    display: inline;
+}
+
+.hidden {
+    display: none;
+}
+
+#AppletWorld {
+
+    position: absolute;
+
+    width: 69vw;
+    height: 90%;
+    top: 2.5vh;
+    left: 1vw;
+}
+
+#AppletControls {
+
+    position: absolute;
+
+    width: 25%;
+    height: 95%;
+    top: 0;
+    left: 70%;
+
+    padding-top: 2.5vh;
+    padding-bottom: 2.5vh;
+    padding-left: 2.5vw;
+    padding-right: 2.5vw;
+
+    overflow: hidden;
+}
+
+#AppletDescription {
+
+    position: absolute;
+
+    font-size: 14pt;
+
+    width: 80%;
+    height: 80%;
+    top: 5%;
+    left: 5%;
+
+    background-color: white;
+    opacity: 0.5;
+
+    padding-top: 5vh;
+    padding-bottom: 5vh;
+    padding-left: 5vw;
+    padding-right: 5vw;
+
+    overflow-y: scroll;
+
+    display: none;
+}
+
+#footer {
+    position: absolute;
+
+    height: 3%;
+    bottom: 0;
+    margin: 1%;
+
+    font-size: 10pt;
+}
+
+#AppletTitle {    
+    position: relative;
+    width: 100%;
+
+    font-family: "Karnivore-Lite";
+    font-size: 30pt;
+    text-align: center;
+    font-weight: bold;
+    line-height: 45pt;
+    margin-bottom: 20px;
+}
+
+.control {
+    width: 90%;
+    text-align: right;
+    vertical-align: middle;
+    padding: 5%;
+    margin-bottom: 10px;
+}
+
+.control_input {
+    vertical-align: middle;
+}
+
+#controlWallContainer {
+    position: relative;
+    width: 100%;
+}
+
+#AppletTitle , .control , #AppletWorld {
+    border-style: solid;
+    border-width: 1px;
+    border-top-width: 15px;    
+}
+
+.description {
+    font-family: "Exo";
+    font-size: 12pt;
+    font-weight: normal;
+    line-height: 15pt;
+
+    transition: all .5s;
+    -webkit-transition: all .5s;
+
+    padding-bottom: 0;
+    padding-top: 0;
+
+    max-height: 0;
+    overflow-y: hidden;
+
+    white-space: pre-line;
+}
+
+.description_visible {
+    max-height: 1000px;
+    padding-bottom: 12pt;
+    padding-top: 12pt;
+}
+
+.control_name {    
+    font-size: 13pt;
+    height: 24px;
+    line-height: 24px;
+}
+
+input[type=checkbox] {
+    display: none;
+}
+
+span.check_control {
+    position: relative;
+    display: inline-block;
+    text-align: left;
+
+    width: 24px;
+    height: 24px;
+
+    background-color: #eeeeee;
+
+}
+
+span.check_control > label {
+    position: relative;
+    display: inline-block;
+
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+
+    opacity: 0;
+}
+
+span.check_control > label:hover {
+    opacity: 0.5;
+}
+
+span.check_control > input[type=checkbox]:checked+label {
+    opacity: 1;
+}
+
+span.slide_control {
+    position: relative;
+    display: inline-block;
+}
+
+input[type=range]{
+    width: 200px;
+    -webkit-appearance: none;
+    margin: auto;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+    position: relative;
+    width: 200px;
+    height: 24px;
+
+    padding: 2px;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: none;
+    height: 20px;
+    width: 20px;
+}
+
+input[type=range]::-moz-range-track {
+    width: 200px;
+    height: 24px;
+
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+input[type=range]::-moz-range-thumb {
+    border: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 0;
+}
+
+input[type=range]::-ms-track {
+    width: 200px;
+    height: 24px;
+
+    padding: 2px;
+}
+
+input[type=range]::-ms-thumb {
+    -webkit-appearance: none;
+    border: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 0;
+}
+
+input[type=radio] {
+    display: none;
+}
+
+span.radio_option {
+    position: relative;
+    font-size: 12pt;
+}
+
+.radio_control_box {
+    text-align: left;    
+}
+
+span.radio_option_box {
+    position: relative;
+    display: inline-block;
+
+    width: 24px;
+    height: 24px;
+    margin: 4px;
+}
+
+span.radio_option_box > label {
+    position: relative;
+    display: inline-block;
+
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+
+    opacity: 0;
+}
+
+span.radio_option_box > label:hover {
+    opacity: 0.5;
+}
+
+span.radio_option_box > input[type=radio]:checked+label {
+    opacity: 1;
+}
+
+input[type=text] {
+    height: 14px;
+    width: 80px;
+
+    color: #484848;
+    border: none;
+    padding: 5px;
+    text-align: right;
+    font-family: "Karnivore-Lite";
+}
+
+span.button_control {
+    height: 20px;
+    padding: 4px;
+    padding-left: 10px;
+    padding-right: 10px;
+
+    border-radius: 4px;
+
+    cursor: pointer;
+}
+
+.ps-scrollbar-y-rail {
+    -webkit-border-radius: 0px !important;
+    -moz-border-radius: 0px !important;
+    border-radius: 0px !important;
+    width: 12px !important;
+}
+
+.ps-scrollbar-y {
+    -webkit-border-radius: 0px !important;
+    -moz-border-radius: 0px !important;
+    border-radius: 0px !important;
+    width: 12px !important;
+}

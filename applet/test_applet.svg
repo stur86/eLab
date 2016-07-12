@@ -1,0 +1,12 @@
+<defs>
+<filter id="f1" x="-20%" y="-20%" width="140%" height="140%">
+  <feGaussianBlur in="SourceGraphic" stdDeviation="0.7" />
+</filter>
+</defs>
+
+<g filter="url(#f1)">
+<circle fill="#eeefef" r="20" ng-attr-cx="{{engine.x}}" cy="100" ng-click="start_simul()"></circle>
+<circle fill="#ff5588" r="20" cx="80" cy="120" ng-click="stop_simul()"></circle>
+<circle id="testdot" fill="#ef44ef" r="20" cx="300" cy="200"></circle>
+<rect id="testrect" fill="#44efef" x="400" y="20" width="30" height="30"></rect>
+</g>

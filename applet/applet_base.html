@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html ng-controller="testAppCtrl">
+<head>
+    <title>{{engine.name}}</title>
+
+    <!-- D3.js -->
+    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <!-- Angular.js -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
+    <!-- Masonry, for wall layout -->
+    <script src="../libs/masonry.pkgd.min.js"></script>
+    <!-- PerfectScrollbar and jQueryMousewheel, for nice looking scrollbars -->
+    <script src="../libs/jquery.mousewheel.js"></script>
+    <script src="../libs/perfect-scrollbar.jquery.min.js"></script>
+
+    <!-- Applet files -->
+    <script src="applet_loader.js"></script>
+    <script src="utils.js"></script>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" type="text/css" href="../css/perfect-scrollbar.css">
+    <link rel="stylesheet" type="text/css" href="../css/applet.css">
+    <link rel="stylesheet" type="text/css" href="../css/animate.css">
+
+    <style type="text/css">
+        body {
+            background-color: {{engine.colors.background}};
+        }
+
+        #AppletWorld {
+            background-color: {{engine.colors.world}};
+        }
+
+        #AppletTitle , .control_name, span.radio_option , #footer {
+            color: {{engine.colors.text}};
+        }
+
+        #AppletTitle , .control {
+            background-color: {{engine.colors.controls_bkg}};
+        }
+
+        #AppletTitle , .control , #AppletWorld {
+            border-color: {{engine.colors.text}};
+            box-shadow: 0px 0px 10px {{engine.colors.glow}};
+        }
+
+        #AppletTitle:hover {
+            box-shadow: 0px 0px 15px {{engine.colors.glow}};
+        }
+
+        .control:hover {
+            box-shadow: 0px 0px 15px {{engine.colors.glow}};    
+        }
+
+        span.check_control > label , span.radio_option_box > label {
+            background-color: {{engine.colors.controls_1}};            
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            background-color: {{engine.colors.controls_1}};
+        }
+
+        input[type=range]::-moz-range-thumb {
+            background-color: {{engine.colors.controls_1}};            
+        }
+
+        input[type=range]::-ms-thumb {
+            background-color: {{engine.colors.controls_1}};                        
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            background-color: {{engine.colors.controls_0}};                        
+        }
+
+        input[type=range]::-moz-range-track {
+            background-color: {{engine.colors.controls_0}};                        
+        }
+
+        input[type=range]::-ms-track {
+            background-color: {{engine.colors.controls_0}};                        
+        }
+
+        span.check_control , span.radio_option_box , input[type=text] {
+            background-color: {{engine.colors.controls_0}};                        
+        }
+
+        span.button_control {
+            color: {{engine.colors.text_dark}};
+            background-color: {{engine.colors.controls_0}};                                    
+        }
+
+        span.button_control:active {
+            color: {{engine.colors.text}};
+            background-color: {{engine.colors.controls_1}};                                    
+        }
+
+        .ps-scrollbar-y-rail {
+            background-color: {{engine.colors.controls_0}} !important;
+        }
+
+        .ps-scrollbar-y {
+            background-color: {{engine.colors.controls_1}} !important;
+        }
+
+    </style>
+
+    <script type="text/javascript">
+        // Grab the name of the applet
+
+        var app;
+        var ctrlwall;
+        var applet_url = extractURLpars()['applet'];
+        applet_url = applet_url || "test_applet.js";
+        $.getScript(applet_url, function() {
+            app = new ElabApplet(Applet);            
+            // Set ng-controller]
+            $('html').attr('ng-controller', app.worldApp.name  + 'Ctrl'); 
+            angular.bootstrap(document, [app.worldApp.name]);
+
+            //PerfectScrollbar
+            $('#AppletControls').perfectScrollbar({
+                suppressScrollX: true,
+            });
+        });
+
+    </script>
+</head>
+<body>
+<!-- Always three elements: SVG world, controls, and help/info -->
+<svg id="AppletWorld" class="animated zoomIn">
+</svg>
+<div id="AppletControls">
+    <div id="AppletTitle" class="animatedFast fadeInRight" ng-click="show_description = !show_description">
+        {{engine.name}}
+        <div class="description" ng-class="{description_visible : show_description}">
+        {{engine.description}}
+        </div>
+    </div>
+    <div id="controlWallContainer">
+    <div class="control animatedFast fadeInRight" ng-repeat="(par_name, par) in engine.parameters"
+         style="-webkit-transition-delay: {{$index}}s !important; transition-delay: {{$index}}s !important;">
+        <span class="control_name">
+        {{par.name}}
+        </span>
+        <span class="check_control control_input" ng-if="par.type == 'check'">            
+            <input id="{{par_name}}_box" type="checkbox" ng-model="par.value">
+            <label for="{{par_name}}_box" ng-click="play_confirm();"></label>
+        </span>
+        <span class="slide_control control_input" ng-if="par.type == 'slide'">
+            <input id="{{par_name}}_slide" type="range" ng-model="par.value"
+             min="{{par.min}}" max={{par.max}} step={{par.step}}  ng-click="play_confirm();">
+        </span>
+        <span class="textbox_control control_input" ng-if="par.type == 'text'">
+            <input id="{{par_name}}_text" type="text" value="{{par.value}}" ng-model="par.value">
+        </span>
+        <span class="radio_control control_input" ng-if="par.type == 'radio'">        
+            <form id="{{par_name}}_box" class="radio_control_box" action="">
+                <span class="radio_option" ng-repeat="(opt, opt_full) in par.options">
+                <span class="radio_option_box">
+                <input type="radio" id="{{par_name}}_{{opt}}_box"
+                       name="{{par_name}}_radio" value="{{opt}}"
+                       ng-checked="par.value == opt"  ng-model="par.value">
+                <label for="{{par_name}}_{{opt}}_box" ng-click="play_confirm();"></label>
+               </span>
+                {{opt_full}}<br>
+                </span>
+            </form>
+        </span>
+        <span class="button_control control_input" ng-if="par.type == 'trigger'" ng-click="par.binding()">
+        {{par.button_name}}
+        </span>
+    </div>
+    </div>
+</div>
+<div id="footer">
+    .running_instance // {{decor_id}}
+</div>
+<div id="AppletDescription"></div>
+</body>
+</html>
