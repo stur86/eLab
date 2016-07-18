@@ -57,11 +57,14 @@ var ElabApplet = function(AppEngine) {
         $scope.engine = new AppEngine($scope, worldApp);
         engine = $scope.engine;
 
-        var appWorld = $('#AppletWorld')
-        appWorld.load(engine.svgurl, '', function() {
-            $compile(appWorld.contents())($scope);
+        // Loading the world with SNAP
+        var appWorld = Snap('#AppletWorld');
+        Snap.load(engine.svgurl, function(f) {
+            appWorld.append(f);
+            $compile($(appWorld.node).contents())($scope);
             engine.loaded();
         });
+        
 
         // Create getters/setters for engine parameters that need them
         for (p in engine.parameters) {

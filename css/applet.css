@@ -335,3 +335,7 @@ span.button_control {
     border-radius: 0px !important;
     width: 12px !important;
 }
+
+.draggable-svgel {
+    cursor: pointer;
+}

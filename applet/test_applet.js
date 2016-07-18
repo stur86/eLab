@@ -73,8 +73,8 @@ var Applet = function() {
     }
 
     this.loaded = function() {
-        makeDraggableSVG('#testdot', {x: ['cx'], y: ['cy']});        
-        makeDraggableSVG('#testrect');        
+        Snap.select('#testdot').drag().addClass('draggable-svgel');        
+        Snap.select('#testrect').drag().addClass('draggable-svgel');        
     }
 }
 
