@@ -13,6 +13,9 @@ function extractURLpars() {
     return pars;
 }
 
+
+// I tried replacing this with Snap.svg but all in all it looks like
+// my solution's better (works on mobiles too for example)
 function makeDraggableSVG(selector, to_edit, additional) {
 
     to_edit = to_edit || {x: ['x'], y: ['y']};
@@ -20,8 +23,7 @@ function makeDraggableSVG(selector, to_edit, additional) {
 
     var drag_obj = $(selector);
     var svg = drag_obj.closest('svg');
-    drag_obj.css('cursor', 'pointer');
-    drag_obj.prop('draggable', true);
+    drag_obj.addClass('draggable-svgel');
 
     // Grab objects to perform operations on
     var edit_objs = {};
@@ -60,8 +62,6 @@ function makeDraggableSVG(selector, to_edit, additional) {
         drag_obj.data('currentX', tX);
         drag_obj.data('currentY', tY);           
 
-        console.log(evt);
-
         // Assign a mousemove event
         svg.on('mousemove touchmove', function(evt) {
 
@@ -69,8 +69,6 @@ function makeDraggableSVG(selector, to_edit, additional) {
             evt.preventDefault();
         
             newattr = {}
-
-            console.log(evt);
 
             if (evt.type == 'touchmove') {
                 var tX = evt.originalEvent.touches[0].clientX;
@@ -105,8 +103,18 @@ function makeDraggableSVG(selector, to_edit, additional) {
         // This one is in common for UP and LEAVE
         var end_drag = function(evt) {
             svg.off('mousemove touchmove');
+            svg.off('mouseup mouseleave touchend touchleave');
         }
 
         svg.on('mouseup mouseleave touchend touchleave', end_drag);
     });
+}
+
+function makeUndraggableSVG(selector) {
+    // Delete everything
+    var drag_obj = $(selector);
+    var svg = drag_obj.closest('svg');
+    drag_obj.removeClass('draggable-svgel');
+
+    drag_obj.off('mousedown touchstart');
 }

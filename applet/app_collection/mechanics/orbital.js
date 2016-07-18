@@ -33,8 +33,8 @@ var Applet = function(scope, ngApp) {
     }
 
     this.set_planet_xy = function() {
-        this.planet.attr('cx', this.planet_xy[0]+this.origin[0]);
-        this.planet.attr('cy', this.planet_xy[1]+this.origin[1]);
+        this.planet.attr({'cx': this.planet_xy[0]+this.origin[0],
+                          'cy': this.planet_xy[1]+this.origin[1]});
     }
     this.set_planetspeed_xy = function() {
         this.planetspeed.attr('x1', this.planet_xy[0]+this.origin[0]);
@@ -57,6 +57,13 @@ var Applet = function(scope, ngApp) {
 
 
     this.reset_system = function() {
+        that.planet.attr({
+          'fill': '#ee9744',
+          'opacity': 1,
+          'r': that._planetmass, // Why doing this by hand instead than with
+                                 // Angular? Nice question. It's because
+                                 // Angular is STUPID, apparently.
+        });
         // planet coordinates
         if (!that.running) {
             that.planet_xy = [that.origin[0]/2.0, 0];
@@ -67,31 +74,20 @@ var Applet = function(scope, ngApp) {
     }    
 
     this.planet_explode = function() {
-        // In this eventuality, use D3 for an animation
-        var planet = d3.select('#planet');
-        // Immediately stop running
+        // Testing Snap.svg for animation
         this.running = false;
-        // Start a transition
-        var startcol = planet.style('fill');
-        that.explode_sfx.play();
-        planet.transition()
-        .duration(750)
-        .style({
+        this.explode_sfx.play();
+        this.planet.animate({
             'r': 150,
             'fill': '#ff0000',
-            'opacity': 0
-        })
-        .each('end', function() {
-            // Restore and reset everything
-            that.reset_system();
-            planet.style({
-                'fill': startcol,
-                'opacity': 1,
-                'r': null,
+            'opacity': 0},
+            750,
+            mina.linear,
+            function() {
+                that.reset_system();
+                that.scope.stop_simul();
+                that.scope.$apply();
             });
-            that.scope.stop_simul();            
-            that.scope.$apply();
-        });
     }
 
     this.orbit = {};
@@ -235,7 +231,6 @@ var Applet = function(scope, ngApp) {
         }
 
         // And apply the thing to drawing
-        console.log(orbit_data);
         d3.select('#orbit_path').attr('d', d3.svg.line().x(function(d) {return d.x})
                                                         .y(function(d) {return d.y})
                                                         .interpolate('quadratic')(orbit_data));
@@ -326,7 +321,7 @@ var Applet = function(scope, ngApp) {
         this.grab_planet_xy();
         this.grab_planetspeed_xy();
         this.eval_orbit();
-        this.planet.off('mousedown');
+        makeUndraggableSVG('#planet');
         this.planetspeed.css('display', 'none');
         this.mspeedhandle.css('display', 'none');
         this._starR0 = this.starSize; // Necessary for future checks
@@ -371,12 +366,12 @@ var Applet = function(scope, ngApp) {
     }
 
     this.loaded = function() {
-        this.planet_drag_on();
-        makeDraggableSVG('#planetspeed_handle', {x: ['#planetspeed$x2', 'cx'], y: ['#planetspeed$y2', 'cy']});
         // Set statically the starting coordinates to that
-        this.planet = $('#planet');
+        this.planet = Snap.select('#planet');
         this.planetspeed = $('#planetspeed');
         this.mspeedhandle = $('#planetspeed_handle');
+        this.planet_drag_on();
+        makeDraggableSVG('#planetspeed_handle', {x: ['#planetspeed$x2', 'cx'], y: ['#planetspeed$y2', 'cy']});
         this.reset_system();
     }
 }

@@ -21,9 +21,7 @@
 <circle id="star" ng-attr-fill="{{engine.starColor}}" ng-attr-r="{{engine.starSize}}"
                                    ng-attr-cx="{{engine.origin[0]}}"
                                    ng-attr-cy="{{engine.origin[1]}}"></circle>
-<circle id="planet" fill="#ee9744" ng-attr-r="{{engine._planetmass}}"
-                                 cx="0"
-                                 cy="0"></circle>
+<circle id="planet" fill="#ee9744" cx="0" cy="0"></circle>
 <line id="planetspeed" stroke="#bbeedd" stroke-width="5" marker-end="url(#arrow)" />             
 <circle id="planetspeed_handle" r="15" fill="rgba(255,255,255,0)" />
 <circle id="focus1" fill="#eedd88" r="5"  ng-attr-transform="translate({{engine.origin[0]}},{{engine.origin[1]}})"
